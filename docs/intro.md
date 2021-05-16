@@ -1,6 +1,6 @@
 # *MERN-Stack*
 
-I want to create a full-stack movie application using the MERN-Stack.
+We will create a full-stack movie application from scratch using the MERN-Stack.
 
 This includes:
 
@@ -94,6 +94,8 @@ Now you can run the command `npm start` inside the client folder to see if every
 
 Perfect! It's time to setup the back end of our movie app.
 
+----------
+
 ## Server
 
 For the the server we will use Node.js with the following dependencies.
@@ -116,3 +118,184 @@ cd > index.js
 npm init -y
 npm install mongoose express cors nodemon
 ```
+
+NOTE:
+Since we are using Express 4.17.1 we can use the [body-parser](https://github.com/expressjs/body-parser) implementation of Express instead of the deprecated body-parser to extract the body portion of an incoming request stream.
+
+### Setup the back-end
+
+TODO:
+
+* connecting the data base to the server
+* create a monogodb cluster
+* setup a monogodb model
+* create some documents
+
+We start by importing the dependencies inside the index.js.
+
+Instead of using the following syntax
+
+```js
+const express = require('express');
+```
+
+we can use the import syntax as follows
+
+```js
+import express from ('express');
+import mongoose from ('mongoose');
+import cors from ('cors');
+```
+
+To enable it we have just to add the following to our package.json file
+
+```json
+{
+  ...
+  "main": "index.js",
+  "type": "module",
+  ...
+}
+```
+
+Furthermore we delete the test script and add a start script
+
+```json
+{
+  ...
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  ...
+}
+```
+
+## Express Server Application
+
+### Background
+
+Express is a routing and middleware framework. An express app is a series of middleware function calls.
+
+***Middleware*** are those functions/methods/operations which are called between processing the request and sending the response.
+
+***Middleware functions*** are functions that have access to the request object `req` and response object `res` and to the next middleware function in the request-response cycle. The next middleware function is commonly denoted by a variable named `next`.
+
+Inside our index.js we can now create the object app which denotes the express app using the express function exported by the express modul.
+
+```js
+const app = express();
+```
+
+## Middleware
+
+* `express.json()` is a built-in method to convert the incoming request object  to a JSON object.
+
+* `express.urlencoded()` is a built-in method which converts the incoming request object also to a JSON object but can also convert form data into JSON.
+
+This methods are called as a middleware in our app using
+
+```js
+app.use(express.json());
+app.use(express.urlencoded());
+```
+
+**NOTE:** We need this methods just for POST and PUT requests, because in both cases we send data to the server and ask the server to accept or store the data (object) which is enclosed in the body (i.e. `req.body`) of that POST or PUT request.
+
+To enable cross origin requests we add
+
+```js
+app.use(cors());
+```
+
+**CORS**  is a mechanism that uses additional HTTP headers to tell a browser that it grants permission to a web application running on another domain(origin) to access selected resources from a server of another origin.
+
+## Connecting the database to the server application
+
+## Setup the MongoDB Cluster
+
+We will use [mongodb cloud atlas](https://www.mongodb.com/cloud/atlas1) which means that they are hosting our data base on their cloud. Here we can create a free account which enable us to create a cluster.
+
+After creating a account we click `Build a Cluster` then choose `Shared Cluster` and then just click `Create a Cluster`.
+This starts the deployment of our cluster which can take some time.
+
+While deploying we can go to `Database Access` on the left navbar and click on `ADD NEW DATABASE USER`. In here we create our username and password and click `Add User`. This credentials allows us to read and Write to any database.
+
+Now we navigate to `Network Access` and click `ADD IP ADDRESS`.
+Then we click `ADD CURRENT IP ADDRESS` and `Confirm`.
+
+Time to go back to `Clusters` and click `CONNECT` after it's deployed. Then we choose `Connect your application` because we want to connect it to our server side express and node application. After that we copy the connection string and go back to our index.js.
+
+Inside index.js we create a new variable
+
+```js
+const CONNECTION_URL = 'mongodb+srv://<username>:<password>@cluster0.12n34.mongodb.net/mySecondDatabase?retryWrites=true&w=majority';
+```
+
+From there we can add the username and password. Make sure to delete also the arrows.
+
+**Important** In real applications we can not put our credentials there because they have to be secure. Before the deployment of the app we will create a enviormental variable and store the credentials there.
+
+Furthermore we create a variable Port.
+
+```js
+const PORT = process.env.PORT || 5000;
+```
+
+For now our server is listen on port 5000 but later on when we push this to heroku, `process.env.PORT` is gonna populate automatically by heroku.
+
+Finally we gonna use mongoose to connect our app to the database by calling
+
+```js
+mongoose.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`)))
+  .catch((error) => console.log(error.message));
+```
+
+The last thing we need is to make sure to get no warnings in the console.
+
+```js
+mongoose.set('useFindAndModify', false);
+```
+
+That's it, now we connected successfully the database to our server and the code so far should look like this
+
+```js
+import express from ('express');
+import mongoose from ('mongoose');
+import cors from ('cors');
+
+const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded());
+app.use(cors());
+
+const CONNECTION_URL = 'mongodb+srv://<username>:<password>@cluster0.12n34.mongodb.net/mySecondDatabase?retryWrites=true&w=majority';
+
+const PORT = process.env.PORT || 5000;
+
+mongoose.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`)))
+  .catch((error) => console.log(error.message));
+
+mongoose.set('useFindAndModify', false);
+```
+
+To check if everythin works fine we can simply run inside our server directory
+
+```cmd
+npm start
+```
+
+then we should see the following output in the terminal
+
+```cmd
+[nodemon] 2.0.7
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,json
+[nodemon] starting `node index.js`
+Server running on http://localhost:5000
+```
+
+The next part will be about creating the routes for our back-end application. Therfore we create a new Folder inside server and call it routes,
