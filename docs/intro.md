@@ -33,7 +33,7 @@ PS: It is recomended to use the editor [VSCode](https://code.visualstudio.com/).
 
 ## Setting up the dev env
 
-We will seperate the server and client app. For this purpose we create a folder server and client inside of our project folder. Open the terminal and navigate into your workspace and run the following commands
+We will seperate the server and client app. For this purpose we create a folder server and client inside of our project folder. We open the terminal and navigate into to workspace and run the following commands
 
 ```cmd
 mkdir movie-app
