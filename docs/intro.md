@@ -1,6 +1,6 @@
-# *MERN-Stack*
+# *Movie-App*
 
-We will create a full-stack movie application from scratch using the MERN-Stack.
+We will create a full-stack movie application (similar to netflix or prime video) from scratch using the MERN-Stack.
 
 This includes:
 
@@ -147,7 +147,7 @@ import mongoose from ('mongoose');
 import cors from ('cors');
 ```
 
-To enable it we have just to add the following to our package.json file
+To enable it we have just to add `"type": "module"` to our package.json file
 
 ```json
 {
