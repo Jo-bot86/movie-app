@@ -14,7 +14,7 @@ app.use(express.json({limit: "30mb", extended: true}));
 app.use(express.urlencoded({limit: "30mb", extended: true}));
 app.use(cors());
 
-const CONNECTION_URL = 'mongodb+srv://JoeBot:zcGbNPZdPHerZdit@cluster0.12n34.mongodb.net/mySecondDatabase?retryWrites=true&w=majority';
+
 const PORT = process.env.PORT || 5000;
 
 // connect our data base to the server
